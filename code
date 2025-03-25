@@ -1,0 +1,166 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+df = pd.read_csv("C:/Users/Praneeth Kumar/.spyder-py3/Unique.csv")
+
+# 1. What is the overall trend in user engagement throughout the campaign period?
+print("1st answer :")
+engagement_trend = df.groupby('day')['user_engagement'].value_counts().unstack().fillna(0)
+engagement_trend.plot(kind='line', figsize=(10, 6))
+plt.title('Overall Trend in User Engagement')
+plt.xlabel('Day')
+plt.ylabel('Count')
+plt.xticks(rotation=45)
+plt.legend(title='User Engagement')
+plt.show()
+print()
+
+
+# 2. How does the size of the ad (banner) impact the number of clicks generated?
+print("2nd answer:")
+sns.barplot(data=df, x='banner', y='clicks', estimator=sum, errorbar=None)
+plt.title('Impact of Banner Size on Clicks Generated')
+plt.xlabel('Banner Size')
+plt.ylabel('Total Clicks')
+plt.show()
+print()
+
+
+# 3. Which publisher spaces (placements) yielded the highest number of displays and clicks?
+print("3rd answer:")
+placement_displays = df.groupby('placement')['displays'].sum().nlargest(5)
+placement_clicks = df.groupby('placement')['clicks'].sum().nlargest(5)
+print("Top 5 Placements by Displays:\n", placement_displays)
+print("Top 5 Placements by Clicks:\n", placement_clicks)
+print()
+
+
+# 4. Is there a correlation between the cost of serving ads and the revenue generated from clicks?
+print("4th answer:")
+correlation = df['cost'].corr(df['revenue'])
+print("Correlation between Cost and Revenue:", correlation)
+print()
+
+
+# 5. What is the average revenue generated per click for Company X during the campaign period?
+print("5th answer:")
+average_revenue_per_click = df['revenue'].sum() / df['clicks'].sum()
+print("Average Revenue per Click:", average_revenue_per_click)
+print()
+
+
+# 6. Which campaigns had the highest post-click conversion rates?
+print("6th answer:")
+conversion_rates = df.groupby('campaign_number')['post_click_conversions'].sum() / df.groupby('campaign_number')['clicks'].sum()
+print("Campaigns with Highest Post-click Conversion Rates:\n", conversion_rates.nlargest(5))
+print()
+
+
+# 7. Are there any specific trends or patterns in post-click sales amounts over time?
+print("7th answer:")
+sales_trend = df.groupby('day')['post_click_sales_amount'].sum()
+sales_trend.plot(kind='line', figsize=(10, 6))
+plt.title('Trend in Post-click Sales Amount over Time')
+plt.xlabel('Day')
+plt.ylabel('Post-click Sales Amount')
+plt.xticks(rotation=45)
+plt.show()
+print()
+
+
+# 8. How does the level of user engagement vary across different banner sizes?
+print("8th answer:")
+engagement_banner_counts = df.groupby(['user_engagement', 'banner']).size().reset_index(name='count')
+print("Frequency of User Engagement across Banner Sizes:\n", engagement_banner_counts)
+print()
+
+
+# 9. Which placement types result in the highest post-click conversion rates?
+print("9th answer:")
+conversion_rates_by_placement = df.groupby('placement')['post_click_conversions'].sum() / df.groupby('placement')['clicks'].sum()
+print("Placements with Highest Post-click Conversion Rates:\n", conversion_rates_by_placement.nlargest(5))
+print()
+
+
+# 10. Can we identify any seasonal patterns or fluctuations in displays and clicks throughout the campaign period?
+print("10th answer:")
+monthly_displays = df.groupby('month')['displays'].sum()
+monthly_clicks = df.groupby('month')['clicks'].sum()
+monthly_engagement = df.groupby('month')['user_engagement'].value_counts().unstack().fillna(0)
+print("Monthly Displays:\n", monthly_displays)
+print("Monthly Clicks:\n", monthly_clicks)
+print("Monthly Engagement:\n", monthly_engagement)
+print()
+
+
+# 11. Is there a correlation between user engagement levels and the revenue generated?
+print("11th answer:")
+correlation_engagement_revenue = df['user_engagement'].map({'Low': 1, 'Medium': 2, 'High': 3}).corr(df['revenue'])
+print("Correlation between User Engagement and Revenue:", correlation_engagement_revenue)
+print()
+
+
+# 12. Are there any outliers in terms of cost, clicks, or revenue that warrant further investigation?
+print("12th answer:")
+sns.boxplot(data=df[['cost', 'clicks', 'revenue']])
+plt.title('Boxplot of Cost, Clicks, and Revenue')
+plt.show()
+print()
+
+
+# 13. How does the effectiveness of campaigns vary based on the size of the ad and placement type?
+print("13th answer:")
+campaign_effectiveness = df.groupby(['banner', 'placement']).agg({'clicks': 'sum', 'post_click_conversions': 'sum'})
+print("Campaign Effectiveness:\n", campaign_effectiveness)
+print()
+
+
+# 14. Are there any specific campaigns or banner sizes that consistently outperform others in terms of ROI?
+print("14th answer:")
+df['ROI'] = df['revenue'] / df['cost']
+roi_by_campaign_banner = df.groupby(['campaign_number', 'banner'])['ROI'].mean().sort_values(ascending=False)
+print("ROI by Campaign and Banner Size:\n", roi_by_campaign_banner)
+print()
+
+
+# 15. What is the distribution of post-click conversions across different placement types?
+print("15th answer:")
+conversion_distribution = df.groupby('placement')['post_click_conversions'].sum()
+print("Distribution of Post-click Conversions across Placement Types:\n", conversion_distribution)
+print()
+
+
+# 16. Are there any noticeable differences in user engagement levels between weekdays and weekends?
+print("16th answer:")
+df['weekday'] = pd.to_datetime(df['day'], format='%d').dt.day_name()
+engagement_weekday = df.groupby('weekday')['user_engagement'].value_counts().unstack().fillna(0)
+print("User Engagement by Weekday:\n", engagement_weekday)
+print()
+
+
+# 17. How does the cost per click (CPC) vary across different campaigns and banner sizes?
+print("17th answer:")
+df['CPC'] = df['cost'] / df['clicks']
+cpc_variation = df.groupby(['campaign_number', 'banner'])['CPC'].mean().sort_values()
+print("Average CPC by Campaign and Banner Size:\n", cpc_variation)
+print()
+
+
+# 18. Are there any campaigns or placements that are particularly cost-effective in terms of generating post-click conversions?
+print("18th answer:")
+cost_effective_campaigns = df.groupby(['campaign_number', 'placement'])['cost'].sum() / df.groupby(['campaign_number', 'placement'])['post_click_conversions'].sum()
+print("Cost-Effective Campaigns and Placements:\n", cost_effective_campaigns)
+print()
+
+
+# 19. Can we identify any trends or patterns in post-click conversion rates based on the day of the week?
+print("19th answer:")
+conversion_rate_trend = df.groupby('weekday')['post_click_conversions'].sum() / df.groupby('weekday')['clicks'].sum()
+print("Post-click Conversion Rate by Weekday:\n", conversion_rate_trend)
+print()
+
+
+# 20. How does the effectiveness of campaigns vary between different user engagement levels in terms of post-click conversions?
+print("20th answer:")
+conversion_rate_by_engagement = df.groupby('user_engagement')['post_click_conversions'].sum() / df.groupby('user_engagement')['clicks'].sum()
+print("Post-click Conversion Rate by User Engagement Level:\n", conversion_rate_by_engagement)
